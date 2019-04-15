@@ -1,17 +1,12 @@
 $(function(){
- 
   // sunBurst({name: "NYCHA Repair Violations", children: gon.sunburst_data});
   zoomBurst(gon.man_sunburst_data, ".man-burst");
   zoomBurst(gon.bx_sunburst_data, ".bx-burst");
   zoomBurst(gon.bk_sunburst_data, ".bk-burst");
-
 })
 
 function zoomBurst(root_data, boro) {
- var root = {"name": "NYCHA Repair Violations",
- "children": root_data}
-
-
+  var root = { "name": "NYCHA Repair Violations", "children": root_data }
 
   var width = 960,
     height = 700,
