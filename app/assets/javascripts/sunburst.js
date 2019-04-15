@@ -1,17 +1,12 @@
 $(function(){
- 
   // sunBurst({name: "NYCHA Repair Violations", children: gon.sunburst_data});
   zoomBurst(gon.man_sunburst_data, ".man-burst");
   zoomBurst(gon.bx_sunburst_data, ".bx-burst");
   zoomBurst(gon.bk_sunburst_data, ".bk-burst");
-
 })
 
 function zoomBurst(root_data, boro) {
- var root = {"name": "NYCHA Repair Violations",
- "children": root_data}
-
-
+  var root = { "name": "NYCHA Repair Violations", "children": root_data }
 
   var width = 960,
     height = 700,
@@ -25,11 +20,13 @@ function zoomBurst(root_data, boro) {
 
   var color = d3.scale.category20c();
 
-  var svg = d3.select(boro).append("svg").attr("class", "col-md-offset-1")
-      .attr("width", width)
-      .attr("height", height)
+  var svg = d3.select(boro)
+    .append("svg")
+    .attr("class", "col-md-offset-1")
+    .attr("width", width)
+    .attr("height", height)
     .append("g")
-      .attr("transform", "translate(" + width / 2 + "," + (height / 2 ) + ")");
+    .attr("transform", "translate(" + width / 2 + "," + (height / 2 ) + ")");
 
   var partition = d3.layout.partition(root)
       .value(function(d) { return d.count; });
@@ -39,7 +36,6 @@ function zoomBurst(root_data, boro) {
       .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
       .innerRadius(function(d) { return Math.max(0, y(d.y)); })
       .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
-
 
   var g = svg.selectAll("g")
       .data(partition.nodes(root))

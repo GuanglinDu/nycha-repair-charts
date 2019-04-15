@@ -2,12 +2,11 @@ $(function(){
   renderChart(gon.bx_data, ".bx-chart");
   // renderChart(gon.bk_data, ".bk-chart");
   renderChart(gon.man_data, ".man-chart");
-
-})
+});
 
 function renderChart(data, boro){
-  var data = data
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  //var data = data
+  var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -61,8 +60,8 @@ function renderChart(data, boro){
 
 function renderBxChart(data, boro){
   debugger;
-  var data = data
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  //var data = data
+  var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -79,7 +78,6 @@ function renderBxChart(data, boro){
   var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-  
 
   var svg = d3.select(boro)
     .attr("width", width + margin.left + margin.right)
@@ -113,7 +111,6 @@ function renderBxChart(data, boro){
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); });
-
 };
 
 //    var margin = {top: 20, right: 30, bottom: 30, left: 40},

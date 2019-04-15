@@ -30,12 +30,15 @@ gem 'sdoc', '0.4.1', group: :doc
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  gem 'byebug',      '4.0.5'
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '2.1.2'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring',      '2.0.2'
-  gem 'sqlite3',     '1.3.10'  
+  gem 'byebug',        '4.0.5'
+  # Access an IRB console on exception pages or by using <%= console %>
+  # in views
+  gem 'web-console',   '2.1.2'
+  # Spring speeds up development by keeping your application running in the
+  # background. Read more: https://github.com/rails/spring
+  gem 'spring',        '2.0.2'
+  gem 'sqlite3',       '1.3.10'
+  gem 'awesome_print', '1.6.1'
 end
 
 group :production do
