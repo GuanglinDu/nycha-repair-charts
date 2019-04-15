@@ -5,9 +5,6 @@ $(function(){
 
 })
 
-
-
-
 function renderChart(data, boro){
   var data = data
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -26,9 +23,7 @@ function renderChart(data, boro){
 
   var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left")
-    
-    
+    .orient("left")   
 
   var svg = d3.select(boro)
     .attr("width", width + margin.left + margin.right)
@@ -64,8 +59,6 @@ function renderChart(data, boro){
       .attr("height", function(d) { return height - y(d.value); });
 
 };
-
-
 
 
 
@@ -89,8 +82,7 @@ function renderBxChart(data, boro){
   var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-    
-    
+  
 
   var svg = d3.select(boro)
     .attr("width", width + margin.left + margin.right)
@@ -126,16 +118,6 @@ function renderBxChart(data, boro){
       .attr("height", function(d) { return height - y(d.value); });
 
 };
-
-
-
-
-
-
-
-
-
-
 
 //    var margin = {top: 20, right: 30, bottom: 30, left: 40},
 //     width = 960 - margin.left - margin.right,
@@ -227,9 +209,3 @@ function renderBxChart(data, boro){
   //     .attr("y", barHeight / 2)
   //     .attr("dy", ".35em")
   //     .text(function(d) { return d.keyword; });
-
-
-
-
-
-

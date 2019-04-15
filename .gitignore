@@ -10,6 +10,9 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+/db/nycha_repairs.development
+/db/nycha_repairs.test
+/db/nycha_repairs.production
 
 # Ignore all logfiles and tempfiles.
 /log/*
