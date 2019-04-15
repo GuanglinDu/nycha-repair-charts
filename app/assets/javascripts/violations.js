@@ -57,10 +57,7 @@ function renderChart(data, boro){
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); });
-
 };
-
-
 
 function renderBxChart(data, boro){
   debugger;
@@ -142,8 +139,6 @@ function renderBxChart(data, boro){
 
 //   // var width = 960,
 //   //   height = 500;
-
-  
 
 //   var chart = d3.select(".chart")
 //       .attr("width", width)
