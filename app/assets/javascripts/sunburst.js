@@ -1,22 +1,25 @@
+/* Calling the 3 functions together will cause an undefined object bug in JS.
 $(function(){
   // sunBurst({name: "NYCHA Repair Violations", children: gon.sunburst_data});
+  console.log("gon.man_sunburst_data: " + gon.man_sunburst_data);
+  console.log("gon.bx_sunburst_data: " + gon.bx_sunburst_data);
+  console.log("gon.bk_sunburst_data: " + gon.bk_sunburst_data);
+  //debugger;
   zoomBurst(gon.man_sunburst_data, ".man-burst");
   zoomBurst(gon.bx_sunburst_data, ".bx-burst");
   zoomBurst(gon.bk_sunburst_data, ".bk-burst");
-})
+}) */
 
 function zoomBurst(root_data, boro) {
   var root = { "name": "NYCHA Repair Violations", "children": root_data }
-
+  
   var width = 960,
     height = 700,
     radius = Math.min(width, height) / 2;
 
-  var x = d3.scale.linear()
-      .range([0, 2 * Math.PI]);
+  var x = d3.scale.linear().range([0, 2 * Math.PI]);
 
-  var y = d3.scale.linear()
-      .range([0, radius]);
+  var y = d3.scale.linear().range([0, radius]);
 
   var color = d3.scale.category20c();
 
@@ -42,8 +45,9 @@ function zoomBurst(root_data, boro) {
       .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
   var g = svg.selectAll("g")
-      .data(partition.nodes(root))
-    .enter().append("g");
+             .data(partition.nodes(root))
+             .enter()
+             .append("g");
 
   var path = g.append("path")
     .attr("d", arc)

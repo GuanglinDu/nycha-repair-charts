@@ -63,11 +63,11 @@ GEM
       thor (~> 0.14)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    gon (5.2.3)
-      actionpack (>= 2.3.0)
+    gon (6.0.1)
+      actionpack (>= 3.0)
       json
       multi_json
-      request_store (>= 1.0.5)
+      request_store (>= 1.0)
     google-analytics-rails (0.0.6)
     hashie (3.6.0)
     hike (1.2.3)
@@ -189,7 +189,7 @@ DEPENDENCIES
   byebug (= 4.0.5)
   coffee-rails (= 4.1.0)
   figaro (= 1.1.1)
-  gon (= 5.2.3)
+  gon (= 6.0.1)
   google-analytics-rails (= 0.0.6)
   jbuilder (= 2.2.13)
   jquery-rails (= 4.0.3)

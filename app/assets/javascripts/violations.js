@@ -1,13 +1,13 @@
+/* Calling the 2 functions together will cause an undefined object bug in JS.
 $(function(){
   renderChart(gon.bx_data, ".bx-chart");
   // renderChart(gon.bk_data, ".bk-chart");
   renderChart(gon.man_data, ".man-chart");
-});
+}); */
 
 function renderChart(data, boro){
-  //var data = data
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-    width = 960 - margin.left - margin.right,
+    width  = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
   var x = d3.scale.ordinal()
@@ -29,38 +29,37 @@ function renderChart(data, boro){
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+  //debugger;
   x.domain(data.map(function(d) { return d.keyword; }));
   y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
   svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+     .attr("class", "x axis")
+     .attr("transform", "translate(0," + height + ")")
+     .call(xAxis);
 
   svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -35)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("No. of Violations");
+     .attr("class", "y axis")
+     .call(yAxis)
+     .append("text")
+     .attr("transform", "rotate(-90)")
+     .attr("y", -35)
+     .attr("dy", ".71em")
+     .style("text-anchor", "end")
+     .text("No. of Violations");
 
   svg.selectAll(".bar")
-      .data(data)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.keyword); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); });
+     .data(data)
+     .enter().append("rect")
+     .attr("class", "bar")
+     .attr("x", function(d) { return x(d.keyword); })
+     .attr("width", x.rangeBand())
+     .attr("y", function(d) { return y(d.value); })
+     .attr("height", function(d) { return height - y(d.value); });
 };
 
 function renderBxChart(data, boro){
-  debugger;
-  //var data = data
+  //debugger;
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;

@@ -3,6 +3,7 @@
 <head>
   <title>NychaRepairCharts</title>
   <%= include_gon %>
+  <%#= Gon::Base.render_data({}) %>
   <%= stylesheet_link_tag    'application', media: 'all'%>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
@@ -26,7 +27,9 @@
       <ul class="nav navbar-nav">
         
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Boro<span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+             role="button" aria-expanded="false">Boro<span class="caret"></span>
+          </a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="/manhattan">Manhattan</a></li>
             <li><a href="/brooklyn">Brooklyn</a></li>
