@@ -50,11 +50,11 @@ function zoomBurst(root_data, boro) {
              .append("g");
 
   var path = g.append("path")
-    .attr("d", arc)
-    .style("fill", function(d) {
-      return color((d.children ? d : d.parent).name);
-    })
-    .on("click", click);
+              .attr("d", arc)
+              .style("fill", function(d) {
+                return color((d.children ? d : d.parent).name);
+              })
+              .on("click", click);
 
 
   var text = g.append("text")
