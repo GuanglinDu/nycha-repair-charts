@@ -11,17 +11,19 @@ $(function(){
 }) */
 
 function zoomBurst(root_data, boro) {
-  var root = { "name": "NYCHA Repair Violations", "children": root_data }
+  var root = { name: "NYCHA Repair Violations", children: root_data }
   
   var width = 960,
     height = 700,
     radius = Math.min(width, height) / 2;
 
-  var x = d3.scale.linear().range([0, 2 * Math.PI]);
+  var x = d3.scaleLinear().range([0, 2 * Math.PI]);
+  var y = d3.scaleLinear().range([0, radius]);
 
-  var y = d3.scale.linear().range([0, radius]);
-
-  var color = d3.scale.category20c();
+  //var color = d3.scale.category20c(); // v3
+  var color = d3.scaleOrdinal()
+                .domain(root_data)
+                .range(d3.schemeSet3);  // v5
 
   var svg = d3.select(boro)
     .append("svg")
@@ -31,12 +33,19 @@ function zoomBurst(root_data, boro) {
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + (height / 2 ) + ")");
 
-  var partition = d3.layout.partition(root)
-      .value(function(d) { return d.count; });
+  //var partition = d3.layout.partition(root) // v3
+  //   .value(function(d) { return d.count; }); // v3
+  var partition = d3.partition().size([2 * Math.PI, radius * radius]);
+    // .size([height, width])
+    // .padding(1)
+    // .round(true); // v5
 
-  var arc = d3.svg.arc()
+  partition(root);
+
+  //var arc = d3.svg.arc() // v3
+  var arc = d3.arc() // v5
       .startAngle(function(d) {
-        return Math.max(0, Math.min(2 * Math.PI, x(d.x)));
+        return Math.max(0, Math.min(2 * Math.PI, x(d.x))); 
       })
       .endAngle(function(d) {
         return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx)));
@@ -45,7 +54,7 @@ function zoomBurst(root_data, boro) {
       .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
   var g = svg.selectAll("g")
-             .data(partition.nodes(root))
+             .data(partition.nodes(root)) // v3
              .enter()
              .append("g");
 
@@ -139,25 +148,24 @@ function sunBurst(jsonObject) {
     radius = Math.min(width, height) / 2,
     color = d3.scale.category20c();
 
-var svg = d3.select(".sunburst")
-  .append("svg")
-  .attr("class", "center-sun")
-  .attr("width", width)
-  .attr("height", height)
-  .append("g")
-  .attr("transform", "translate(" + width / 2 + "," + height * .52 + ")");
+  var svg = d3.select(".sunburst")
+    .append("svg")
+    .attr("class", "center-sun")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height * .52 + ")");
 
-var partition = d3.layout.partition()
-    .sort(null)
-    .size([2 * Math.PI, radius * radius])
-    .value(function(d) { return 1; });
+  var partition = d3.layout.partition()
+      .sort(null)
+      .size([2 * Math.PI, radius * radius])
+      .value(function(d) { return 1; });
 
-var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
-    .endAngle(function(d) { return d.x + d.dx; })
-    .innerRadius(function(d) { return Math.sqrt(d.y); })
-    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
+  var arc = d3.svg.arc()
+      .startAngle(function(d) { return d.x; })
+      .endAngle(function(d) { return d.x + d.dx; })
+      .innerRadius(function(d) { return Math.sqrt(d.y); })
+      .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
   var path = svg.datum(jsonObject).selectAll("path")
       .data(partition.nodes)

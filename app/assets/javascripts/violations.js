@@ -1,7 +1,7 @@
 /* Calling the 2 functions together will cause an undefined object bug in JS.
 $(function(){
   renderChart(gon.bx_data, ".bx-chart");
-  // renderChart(gon.bk_data, ".bk-chart");
+  renderChart(gon.bk_data, ".bk-chart");
   renderChart(gon.man_data, ".man-chart");
 }); */
 
@@ -10,19 +10,14 @@ function renderChart(data, boro){
     width  = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-  var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+  //var x = d3.scale().ordinal().rangeRoundBands([0, width], .1); // v3
+  var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);     // v4 & v5
+  var y = d3.scaleLinear().range([height, 0]);
 
-  var y = d3.scale.linear()
-    .range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")   
+  //var xAxis = d3.svg.axis().scale(x).orient("bottom"); // v3
+  //var yAxis = d3.svg.axis().scale(y).orient("left");   // v3
+  var xAxis = d3.axisBottom(x).tickFormat(function(d) { return d.x; }); // v5?
+  var yAxis = d3.axisLeft(y);                                           // v5?
 
   var svg = d3.select(boro)
     .attr("width", width + margin.left + margin.right)
@@ -50,10 +45,11 @@ function renderChart(data, boro){
 
   svg.selectAll(".bar")
      .data(data)
-     .enter().append("rect")
+     .enter()
+     .append("rect")
      .attr("class", "bar")
      .attr("x", function(d) { return x(d.keyword); })
-     .attr("width", x.rangeBand())
+     .attr("width", x.bandwidth())
      .attr("y", function(d) { return y(d.value); })
      .attr("height", function(d) { return height - y(d.value); });
 };
@@ -64,10 +60,10 @@ function renderBxChart(data, boro){
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-  var x = d3.scale.ordinal()
+  var x = d3.scaleOrdinal()
     .rangeRoundBands([0, width], .1);
 
-  var y = d3.scale.linear()
+  var y = d3.scaleLinear()
     .range([height, 0]);
 
   var xAxis = d3.svg.axis()
@@ -116,10 +112,10 @@ function renderBxChart(data, boro){
 //     width = 960 - margin.left - margin.right,
 //     height = 500 - margin.top - margin.bottom;
 
-// var x = d3.scale.ordinal()
+// var x = d3.scaleOrdinal()
 //     .rangeRoundBands([0, width], .1);
 
-// var y = d3.scale.linear()
+// var y = d3.scaleLinear()
 //     .range([height, 0]);
 
 // var xAxis = d3.svg.axis()
@@ -160,8 +156,6 @@ function renderBxChart(data, boro){
 //       .attr("dy", ".75em")
 //       .text(function(d) { return d.keyword; });
   
-  
-
 //   chart.append("g")
 //       .attr("class", "x axis")
 //       .attr("transform", "translate(0," + height + ")")
@@ -177,7 +171,7 @@ function renderBxChart(data, boro){
   // var width = 420,
   //     barHeight = 20;
 
-  // var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
+  // var x = d3.scaleLinear().domain([0, data.length]).range([0, width]);
 
   // var chart = d3.select(".chart")
   //     .attr("width", width)

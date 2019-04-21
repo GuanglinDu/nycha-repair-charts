@@ -13,9 +13,8 @@ gem 'jbuilder',       '2.2.13'
 gem 'bootstrap-sass', '3.1.1.1'
 gem 'nokogiri',       '1.9.1'
 gem 'sprockets',      '2.12.5'
+gem 'd3-rails',       '5.7.0'
 gem 'soda-ruby',      '0.2.13', :require => 'soda'
-
-gem 'sdoc', '0.4.1', group: :doc
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -46,3 +45,5 @@ group :production do
   gem 'rails_12factor',         '0.0.3'
   gem 'pg',                     '0.18.1'
 end
+
+gem 'sdoc', '0.4.1', group: :doc
