@@ -10,19 +10,49 @@ $(function(){
   zoomBurst(gon.bk_sunburst_data, ".bk-burst");
 }) */
 
+var jsonObject = {
+ "name": "flare",
+ "children": [
+  {
+   "name": "analytics",
+   "children": [
+    {
+     "name": "cluster",
+     "children": [
+      {"name": "AgglomerativeCluster", "count": 3938},
+      {"name": "CommunityStructure", "count": 3812},
+      {"name": "MergeEdge", "count": 743}
+     ]
+    },
+    {
+     "name": "graph",
+     "children": [
+      {"name": "BetweennessCentrality", "count": 3534},
+      {"name": "LinkDistance", "count": 5731}
+     ]
+    }
+   ]
+  }
+ ]
+};
+
 function zoomBurst(root_data, boro) {
-  var root = { name: "NYCHA Repair Violations", children: root_data }
-  
+  var root = jsonObject; // test data
+  // var root = { name: "NYCHA Repair Violations", children: root_data };
+
+  console.log(root);
+
   var width = 960,
     height = 700,
     radius = Math.min(width, height) / 2;
 
   var x = d3.scaleLinear().range([0, 2 * Math.PI]);
   var y = d3.scaleLinear().range([0, radius]);
+  //var y = d3.scaleSqrt().range([0, radius]);
 
   //var color = d3.scale.category20c(); // v3
   var color = d3.scaleOrdinal()
-                .domain(root_data)
+                .domain(root)
                 .range(d3.schemeSet3);  // v5
 
   var svg = d3.select(boro)
@@ -33,47 +63,48 @@ function zoomBurst(root_data, boro) {
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + (height / 2 ) + ")");
 
-  //var partition = d3.layout.partition(root) // v3
+  //var partition = d3.layout.partition(root)
   //   .value(function(d) { return d.count; }); // v3
-  var partition = d3.partition().size([2 * Math.PI, radius * radius]);
-    // .size([height, width])
-    // .padding(1)
-    // .round(true); // v5
+  var partition = d3.partition(); //.size([2 * Math.PI, radius]);
 
-  partition(root);
-
-  //var arc = d3.svg.arc() // v3
   var arc = d3.arc() // v5
       .startAngle(function(d) {
-        return Math.max(0, Math.min(2 * Math.PI, x(d.x))); 
+        return Math.max(0, Math.min(2 * Math.PI, x(d.x0))); 
       })
       .endAngle(function(d) {
-        return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx)));
+        return Math.max(0, Math.min(2 * Math.PI, x(d.x1)));
       })
-      .innerRadius(function(d) { return Math.max(0, y(d.y)); })
-      .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+      .innerRadius(function(d) { return Math.max(0, y(d.y0)); })
+      .outerRadius(function(d) { return Math.max(0, y(d.y1)); });
 
-  var g = svg.selectAll("g")
-             .data(partition.nodes(root)) // v3
-             .enter()
-             .append("g");
+  root = d3.hierarchy(root)
+           .sum(d => d.count);
 
-  var path = g.append("path")
+  svg.selectAll("path")
+     .data(partition(root).descendants())
+     .enter()
+     .append("g")
+     .attr("class", "node");
+
+  var path = svg.selectAll(".node")
+    .append("path")
     .attr("d", arc)
     .style("fill", function(d) {
-      return color((d.children ? d : d.parent).name);
+      return color((d.children ? d : d.parent).data.name);
     })
     .on("click", click);
 
-
-  var text = g.append("text")
+  var text = svg.selectAll(".node")
+    .append("text")
     .attr("transform", function(d) {
       return "rotate(" + computeTextRotation(d) + ")";
     })
-    .attr("x", function(d) { return y(d.y); })
+    .attr("x", function(d) { return y(d.y0); })
     .attr("dx", "6") // margin
     .attr("dy", ".35em") // vertical-align
-    .text(function(d) { return d.name; });
+    .text(function(d) {
+      return d.data.name === "root" ? "" : d.data.name;
+    });
 
   function click(d) {
     // fade out all text elements
@@ -81,133 +112,40 @@ function zoomBurst(root_data, boro) {
 
     path.transition()
       .duration(750)
-      .attrTween("d", arcTween(d))
-      .each("end", function(e, i) {
+      .tween("scale", function() {
+        var xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
+            yd = d3.interpolate(y.domain(), [d.y0, 1]),
+            yr = d3.interpolate(y.range(), [d.y0 ? 20 : 0, radius]);
+        return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); };
+      })
+      .selectAll("path")
+      .attrTween("d", function(d) {
+        return function() { return arc(d); };
+      })
+      .on("end", function(e, i) {
         // check if the animated element's data e lies within the visible
         // angle span given in d
-        if (e.x >= d.x && e.x < (d.x + d.dx)) {
+        if (e.x0 > d.x0 && e.x0 < d.x1) {
           // get a selection of the associated text element
           var arcText = d3.select(this.parentNode).select("text");
           // fade in the text element and recalculate positions
           arcText.transition().duration(750)
             .attr("opacity", 1)
-            .attr("transform", function() { return "rotate(" + computeTextRotation(e) + ")" })
-            .attr("x", function(d) { return y(d.y); });
-        }
+            .attr("class", "visible")
+            .attr("transform", function() {
+              return "rotate(" + computeTextRotation(e) + ")";
+            })
+            .attr("x", function(d) { return y(d.y0); })
+            .text(function(d) {
+              return d.data.name === "root" ? "" : d.data.name;
+            });
+         }
       });
   }
 
   d3.select(self.frameElement).style("height", height + "px");
 
-  // Interpolate the scales!
-  function arcTween(d) {
-    var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-        yd = d3.interpolate(y.domain(), [d.y, 1]),
-        yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
-    return function(d, i) {
-      return i
-          ? function(t) { return arc(d); }
-          : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
-    };
-  }
-
   function computeTextRotation(d) {
-    return (x(d.x + d.dx / 2) - Math.PI / 2) / Math.PI * 180;
+    return (x((d.x0 + d.x1) / 2) - Math.PI / 2) / Math.PI * 180;
   }
 }
-
-function sunBurst(jsonObject) {
-  // var jsonObject = {
-  //  "name": "flare",
-  //  "children": [
-  //   {
-  //    "name": "analytics",
-  //    "children": [
-  //     {
-  //      "name": "cluster",
-  //      "children": [
-  //       {"name": "AgglomerativeCluster", "size": 3938},
-  //       {"name": "CommunityStructure", "size": 3812},
-  //       {"name": "MergeEdge", "size": 743}
-  //      ]
-  //     },
-  //     {
-  //      "name": "graph",
-  //      "children": [
-  //       {"name": "BetweennessCentrality", "size": 3534},
-  //       {"name": "LinkDistance", "size": 5731}
-  //      ]
-  //     }
-  //    ]
-  //   }
-  //  ]
-  // }
-
-  var width = 960/2,
-    height = 700,
-    radius = Math.min(width, height) / 2,
-    color = d3.scale.category20c();
-
-  var svg = d3.select(".sunburst")
-    .append("svg")
-    .attr("class", "center-sun")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height * .52 + ")");
-
-  var partition = d3.layout.partition()
-      .sort(null)
-      .size([2 * Math.PI, radius * radius])
-      .value(function(d) { return 1; });
-
-  var arc = d3.svg.arc()
-      .startAngle(function(d) { return d.x; })
-      .endAngle(function(d) { return d.x + d.dx; })
-      .innerRadius(function(d) { return Math.sqrt(d.y); })
-      .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
-  var path = svg.datum(jsonObject).selectAll("path")
-      .data(partition.nodes)
-    .enter().append("path")
-      .attr("display", function(d) {
-        return d.depth ? null : "none"; // hide inner ring
-      })
-      .attr("d", arc)
-      .style("stroke", "#fff")
-      .style("fill", function(d) {
-        return color((d.children ? d : d.parent).name);
-      })
-      .style("fill-rule", "evenodd")
-      .each(stash);
-
-  d3.selectAll("input").on("change", function change() {
-    var value = this.value === "count"
-        ? function() { return 1; }
-        : function(d) { return d.size; };
-
-    path.data(partition.value(value).nodes)
-        .transition()
-        .duration(1500)
-        .attrTween("d", arcTween);
-  });
-
-  // Stash the old values for transition.
-  function stash(d) {
-    d.x0 = d.x;
-    d.dx0 = d.dx;
-  }
-
-  // Interpolate the arcs in data space.
-  function arcTween(a) {
-    var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
-    return function(t) {
-      var b = i(t);
-      a.x0 = b.x;
-      a.dx0 = b.dx;
-      return arc(b);
-    };
-  }
-
-  d3.select(self.frameElement).style("height", height + "px");
-};

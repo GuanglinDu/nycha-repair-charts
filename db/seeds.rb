@@ -31,8 +31,8 @@ records.each do |record|
       violation.keyword = "Mold"
     elsif r.novdescription.downcase.include?("water leak")
       violation.keyword = "Water Leak"
-    elsif r.novdescription.downcase.include?("plastered") ||
-          r.novdescription.downcase.include?("paint")
+    elsif (r.novdescription.downcase.include?("plastered") ||
+          r.novdescription.downcase.include?("paint"))
       violation.keyword = "Plaster/Paint"
     elsif r.novdescription.downcase.include?("lock")
       violation.keyword = "Broken Lock"
@@ -41,7 +41,7 @@ records.each do |record|
     elsif r.novdescription.downcase.include?("mice")    ||
           r.novdescription.downcase.include?("roaches") ||
           r.novdescription.downcase.include?("rodents") ||
-          r.novdescription.downcase.include?("vermin"))
+          r.novdescription.downcase.include?("vermin")
       violation.keyword = "Insect/rodent infestation"
     elsif r.novdescription.downcase.include?("electric outlet") ||
           r.novdescription.downcase.include?("light switch")

@@ -11,11 +11,11 @@ function renderChart(data, boro){
     height = 500 - margin.top - margin.bottom;
 
   //var x = d3.scale().ordinal().rangeRoundBands([0, width], .1); // v3
-  var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);     // v4 & v5
+  var x = d3.scaleBand().rangeRound([0, width]).padding(0.1); // v4 & v5
   var y = d3.scaleLinear().range([height, 0]);
 
   //var xAxis = d3.svg.axis().scale(x).orient("bottom"); // v3
-  //var yAxis = d3.svg.axis().scale(y).orient("left");   // v3
+  //var yAxis = d3.svg.axis().scale(y).orient("left"); // v3
   var xAxis = d3.axisBottom(x).tickFormat(function(d) { return d.x; }); // v5?
   var yAxis = d3.axisLeft(y);                                           // v5?
 
